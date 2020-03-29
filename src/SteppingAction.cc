@@ -58,21 +58,13 @@ void SteppingAction::UserSteppingAction(const G4Step *step)
   const DetectorConstruction *detectorConstruction = static_cast<const DetectorConstruction *>(G4RunManager::GetRunManager()->GetUserDetectorConstruction());
   // detector volume
   auto detVolume = detectorConstruction->GetScoringVolume();
-
-  //G4cout << detVolume->GetLogicalVolume()->GetMass() / CLHEP::kg << G4endl;
-
+  
   // what to look out for?
   // what volume are we in?
   //G4LogicalVolume *volume = step->GetTrack()->GetVolume()->GetLogicalVolume();
   auto volume = step->GetPreStepPoint()->GetTouchableHandle()->GetVolume();
-  // what kind of particle are we talking about?
-  G4String particleName = step->GetTrack()->GetParticleDefinition()->GetParticleName();
 
-  // open file and write to file
-  std::ofstream data;
-
-  // track length in detector for muons
-  //if (volume == detectorConstruction->GetScoringVolume() && particleName == "mu-" && trackID == 1)
+  // track length and energy deposit in detector for muons
   if (volume == detVolume)
   {
     G4double stepLength = step->GetStepLength() / CLHEP::mm;
