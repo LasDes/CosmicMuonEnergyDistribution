@@ -61,7 +61,7 @@ PrimaryGeneratorAction::PrimaryGeneratorAction()
 
   // particle initial position
   G4double z = 25. * cm;
-  G4ThreeVector pos(10. * cm, 0., z);
+  G4ThreeVector pos(0, 0., z);
   fParticleGun->SetParticlePosition(pos);
 
   // paticle energy
@@ -119,10 +119,13 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
   // radius of full detector
   G4double Radius = 3.8 * cm;
 
+/*
   // position vector
   G4ThreeVector pos = fParticleGun->GetParticlePosition();
   // distance from origin (2D polar coordianates)
   G4double r = std::sqrt(sq(pos.getX()) + sq(pos.getY()));
+*/
+  G4double r = GetPolarDistance();
 
   // initialize zenith and azimuth angle
   G4double theta = pi;
@@ -130,7 +133,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
 
   // seperate cases for distances
   // in the detector radius
-  if (r <= Radius)
+  if (r < Radius)
   {
     // theta zenith angle for momentum direction is arbitrary from [pi / 2, pi] with cos^2(theta) distribution
     theta = Inverse_Func_Approximation(G4UniformRand(), halfpi, pi, Muonic_Angular_CDF);
@@ -139,12 +142,15 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
     phi = G4UniformRand() * twopi;
   }
   // out of the detector radius
-  else if (r > Radius)
+  else if (r >= Radius)
   {
     G4double phiMin = 0., phiMax = 0.;
 
     // importat angles
-    G4double thetaB = std::atan((r - Radius) / Height) + halfpi, thetaMax = std::atan(std::sqrt(sq(r) + sq(Radius)) / Height) + halfpi;
+    G4double thetaB = pi - std::atan((r - Radius) / Height), thetaMax = pi - std::atan(std::sqrt(sq(r) - sq(Radius)) / Height);
+
+    //G4cout << "First" << G4endl;
+    //G4cout << thetaB << " " << thetaMax << G4endl;
 
     // theta zenith angle for momentum direction is arbitrary from [pi / 2, pi] with cos^2(theta) distribution
     while (theta > thetaMax)
@@ -152,11 +158,17 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
       theta = Inverse_Func_Approximation(G4UniformRand(), halfpi, pi, Muonic_Angular_CDF);
     }
 
+    //G4cout << "Second" << G4endl;
+    //G4cout << theta << G4endl;
+
     // further checks for theta to determine boundaries for the possible azimuth angle inteval
     if (theta <= thetaB)
     {
       G4double delta0 = std::asin(Radius / r);
       phiMin = pi - delta0, phiMax = pi + delta0;
+
+      //G4cout << "Third1" << G4endl;
+      //G4cout << phiMin << " " << phiMax << G4endl;
     }
     else if ((theta > thetaB) && (theta <= thetaMax))
     {
@@ -164,6 +176,9 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
       G4double tanXi = std::tan(theta - halfpi);
       G4double delta = std::asin(Radius / Height / tanXi * std::sqrt(1 - sq(sq(r) + sq(Radius) - sq(Height * tanXi)) / sq(2 * r * Radius)));
       phiMin = pi - delta, phiMax = pi + delta;
+
+      //G4cout << "Third2" << G4endl;
+      //G4cout << phiMin << " " << phiMax << G4endl;
     }
 
     // random number generation via std
@@ -171,10 +186,10 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
     std::mt19937 gen(rd());
     std::uniform_real_distribution<G4double> distributionPhi(phiMin, phiMax);
     phi = distributionPhi(gen);
-  }
 
-  // test distance
-  G4cout << r / cm << " cm" << G4endl;
+    //G4cout << "Fourth" << G4endl;
+    //G4cout << phi << G4endl;
+  }
 
   // setting momentum direction vector
   G4double sinTheta = std::sin(theta);

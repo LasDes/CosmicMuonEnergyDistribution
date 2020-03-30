@@ -54,6 +54,13 @@ public:
 
   // method to access particle gun
   const G4ParticleGun *GetParticleGun() const { return fParticleGun; }
+  // distance from origin in 2D polar
+  G4double GetPolarDistance() const
+  {
+    G4ThreeVector pos = fParticleGun->GetParticlePosition();
+    auto sq = [](G4double x) { return x * x; };
+    return std::sqrt(sq(pos.getX()) + sq(pos.getY()));
+  }
 
 private:
   G4ParticleGun *fParticleGun; // pointer a to G4 gun class

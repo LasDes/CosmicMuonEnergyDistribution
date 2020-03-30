@@ -1,4 +1,4 @@
 /run/initialize
 /tracking/verbose 0
-/gun/position {dist} 0 25 cm
-/run/beamOn 250
+/gun/position {dist} 0 25 mm
+/run/beamOn 5000

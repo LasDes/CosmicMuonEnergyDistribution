@@ -73,6 +73,12 @@ void RunAction::EndOfRunAction(const G4Run *run)
   if (nofEvents == 0)
     return;
 
+  const PrimaryGeneratorAction *primaryGeneratorAction = static_cast<const PrimaryGeneratorAction *>(G4RunManager::GetRunManager()->GetUserPrimaryGeneratorAction());
+
+  // get position vector
+  G4double r = primaryGeneratorAction->GetPolarDistance();
+  G4cout << r / cm << " cm" << G4endl;
+
   // write muonic track length and deposited energy to file
   std::ofstream data;
   data.open("TrackAndEdep.txt", std::ofstream::app);
