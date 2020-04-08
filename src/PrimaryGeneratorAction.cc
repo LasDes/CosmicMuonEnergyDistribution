@@ -119,7 +119,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
   // radius of full detector
   G4double Radius = 3.8 * cm;
 
-/*
+  /*
   // position vector
   G4ThreeVector pos = fParticleGun->GetParticlePosition();
   // distance from origin (2D polar coordianates)
@@ -137,7 +137,7 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
   {
     // theta zenith angle for momentum direction is arbitrary from [pi / 2, pi] with cos^2(theta) distribution
     theta = Inverse_Func_Approximation(G4UniformRand(), halfpi, pi, Muonic_Angular_CDF);
-    
+
     // phi azimuth angle for momentum direction is arbitrary from [0, 2pi] with uniform distibution
     phi = G4UniformRand() * twopi;
   }
@@ -146,8 +146,10 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
   {
     G4double phiMin = 0., phiMax = 0.;
 
-    // importat angles
-    G4double thetaB = pi - std::atan((r - Radius) / Height), thetaMax = pi - std::atan(std::sqrt(sq(r) - sq(Radius)) / Height);
+    // important angles
+    G4double thetaMax = pi - std::atan((r - Radius) / Height), thetaB = pi - std::atan(std::sqrt(sq(r) - sq(Radius)) / Height);
+
+    //G4cout << (thetaMax > thetaB) << G4endl;
 
     // theta zenith angle for momentum direction is arbitrary from [pi / 2, pi] with cos^2(theta) distribution
     while (theta > thetaMax)
@@ -161,10 +163,10 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event *anEvent)
       G4double delta0 = std::asin(Radius / r);
       phiMin = pi - delta0, phiMax = pi + delta0;
     }
-    else if ((theta > thetaB) && (theta <= thetaMax))
+    else if (theta > thetaB)
     {
       // new variable xi = theta - pi / 2
-      G4double tanXi = std::tan(theta - halfpi);
+      G4double tanXi = std::tan(pi - theta);
       G4double delta = std::asin(Radius / Height / tanXi * std::sqrt(1 - sq(sq(r) + sq(Radius) - sq(Height * tanXi)) / sq(2 * r * Radius)));
       phiMin = pi - delta, phiMax = pi + delta;
     }
