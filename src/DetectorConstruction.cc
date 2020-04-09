@@ -106,7 +106,7 @@ G4VPhysicalVolume *DetectorConstruction::Construct()
     G4double density = 1.8033 * kg / m3;
     G4Material *elAr = nist->FindOrBuildMaterial("G4_Ar");
     G4Material *matCO2 = nist->FindOrBuildMaterial("G4_CARBON_DIOXIDE");
-    G4Material *innerMaterial = new G4Material("innerMaterial", density, num_elements = 2, kStateGas, 300. * kelvin, 1 * atmosphere);
+    G4Material *innerMaterial = new G4Material("innerMaterial", density, num_elements = 2, kStateGas, 300. * kelvin, 1. * atmosphere);
     innerMaterial->AddMaterial(matCO2, .1);
     innerMaterial->AddMaterial(elAr, .9);
 

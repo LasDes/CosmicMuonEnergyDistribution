@@ -72,6 +72,8 @@ void SteppingAction::UserSteppingAction(const G4Step *step)
     fEventAction->AddTrackLength(stepLength);
     fEventAction->AddMuonEnergy(edep);
   }
+
+  //G4cout << detectorConstruction->GetScoringVolume()->GetLogicalVolume()->GetMass() / CLHEP::kg << G4endl;
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
